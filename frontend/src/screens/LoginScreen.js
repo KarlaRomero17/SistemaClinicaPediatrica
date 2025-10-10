@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import { UserContext } from '../context/UserContext';
-import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import { useContext, useEffect, useState } from 'react';
+import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { UserContext } from '../context/UserContext';
 
 
 const LoginScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    
+
     const [isFocused1, setIsFocused1] = useState(false);
     const [isFocused2, setIsFocused2] = useState(false);
     const { setUser } = useContext(UserContext);
@@ -16,9 +16,9 @@ const LoginScreen = () => {
 
     //verificar si hay token 
     useEffect(() => {
-        const checkToken = async() => {
+        const checkToken = async () => {
             const token = await AsyncStorage.getItem('token');
-            if(token){
+            if (token) {
                 navigation.replace('Main');
             }
         }
@@ -27,16 +27,16 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         //si falta algun campo
-        if(username && password) {
+        if (username && password) {
             await AsyncStorage.setItem('user', username);
             await AsyncStorage.setItem('token', 'faketoken12345');
             navigation.replace('Main');
 
-        }else{
+        } else {
             alert('Debe ingresar usuario y contraseña');
         }
 
-        setUser({username});
+        setUser({ username });
         //navegar a la pantalla de inicio
         navigation.replace('Main')
 
@@ -67,6 +67,13 @@ const LoginScreen = () => {
                 <Text style={styles.buttonText} >Ingresar</Text>
 
             </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={{ marginTop: 15, color: '#005187', textAlign: 'center', fontSize: 16 }}>
+                    ¿No tienes cuenta? Regístrate
+                </Text>
+            </TouchableOpacity>
+
         </View>
     );
 };

@@ -2,12 +2,18 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Backend de mi aplicacion pedriatrica ",
+  "repository": {
+    "type": "git",
+    "url": "Backedn de mi aplicacion pedriatrica"
+  },
+  "license": "ISC",
+  "author": "Karla Romero",
+  "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
-  "author": "Karla Romero",
-  "license": "ISC",
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "bcryptjs": "^3.0.2",
@@ -15,6 +21,6 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.16.4"
+    "mongoose": "^8.18.2"
   }
 }

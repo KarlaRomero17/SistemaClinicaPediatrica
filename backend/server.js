@@ -5,7 +5,7 @@ const cors = require('cors');
 
 const app = express();
 
-
+//configuraciones a servidor http
 app.use(bodyParser.json());
 app.use(cors());
 
