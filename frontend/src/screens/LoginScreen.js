@@ -1,9 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useContext, useEffect, useState } from 'react';
-import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { UserContext } from '../context/UserContext';
+import axios from 'axios';
 
+//Pantalla de login
+const BASE_URL = Platform.OS === 'android' ? 'http://10.175.160.103:5000' : 'http://localhost:5000';
 
 const LoginScreen = () => {
     const [username, setUsername] = useState('');
@@ -11,6 +14,8 @@ const LoginScreen = () => {
 
     const [isFocused1, setIsFocused1] = useState(false);
     const [isFocused2, setIsFocused2] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
     const { setUser } = useContext(UserContext);
     const navigation = useNavigation();
 
@@ -27,18 +32,44 @@ const LoginScreen = () => {
 
     const handleLogin = async () => {
         //si falta algun campo
-        if (username && password) {
-            await AsyncStorage.setItem('user', username);
-            await AsyncStorage.setItem('token', 'faketoken12345');
-            navigation.replace('Main');
-
-        } else {
+        if (!username || !password) {
             alert('Debe ingresar usuario y contraseña');
+            return;
         }
+
+        setLoading(true);
+        try {
+            const res = await axios.post(`${BASE_URL}/api/auth/login`, {
+                nombreUsuario: username,
+                contraseña: password,
+            });
+            console.log(res.data);
+            //creat token
+            const { token } = res.data;
+            if(token){
+                await AsyncStorage.setItem('token', token);
+                await AsyncStorage.setItem('user', username);
+                setLoading(false);
+                navigation.replace('Main');
+            }else{
+                setLoading(false);
+                setError('Error al iniciar sesión');
+            }
+
+        } catch (error) {
+            setLoading(false);
+            if(error.response && error.response.data && error.response.data.message){
+                setError(error.response.data.message);
+                alert(error.response.data.message);
+            }else{
+                setError('Error en el servidor (frontend)');
+            }
+        }
+
 
         setUser({ username });
         //navegar a la pantalla de inicio
-        navigation.replace('Main')
+        //navigation.replace('Main')
 
     };
     return (

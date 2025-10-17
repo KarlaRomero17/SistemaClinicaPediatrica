@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-mongoose.connect('mongodb+srv://romerolissette17_db_user:1dpI1ccfbti08MBW@cluster0.spjbizb.mongodb.net/sistema-clinica', {
+mongoose.connect('mongodb://localhost:27017/sistema-clinica', {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });
