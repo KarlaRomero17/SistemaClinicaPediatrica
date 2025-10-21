@@ -30,12 +30,12 @@ exports.addCita = async (req, res) => {
 // Actualizar una cita
 exports.updateCita = async (req, res) => {
   const { id } = req.params;
-  const { profesional, fecha, motivo, estado, notas } = req.body;
+  const { pacienteId, profesional, fecha, motivo, estado, notas } = req.body;
 
   try {
     const cita = await Cita.findByIdAndUpdate(
       id,
-      { profesional, fecha, motivo, estado, notas },
+      { pacienteId, profesional, fecha, motivo, estado, notas }, // Incluir pacienteId
       { new: true }
     );
     if (!cita) return res.status(404).json({ message: 'Cita no encontrada' });

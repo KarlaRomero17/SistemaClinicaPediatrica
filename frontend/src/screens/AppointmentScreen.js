@@ -93,6 +93,7 @@ const AppointmentScreen = () => {
 
             let response;
             if (editingId) {
+                // Para editar, incluir pacienteId en la actualización
                 response = await axios.put(`${BASE_URL}/api/citas/${editingId}`, nuevaCita, config);
             } else {
                 response = await axios.post(`${BASE_URL}/api/citas`, nuevaCita, config);
@@ -117,12 +118,15 @@ const AppointmentScreen = () => {
     };
 
     const editAppointment = (appointment) => {
+        console.log('📝 Editando cita:', appointment);
+        
         // Separar fecha y hora del formato ISO
         const fechaHora = new Date(appointment.fecha);
         const fechaStr = fechaHora.toISOString().split('T')[0];
         const horaStr = fechaHora.toTimeString().split(':').slice(0, 2).join(':');
 
-        setSelectedPatientId(appointment.pacienteId || '');
+        // CORRECIÓN: Asegurarse de que pacienteId se establece correctamente
+        setSelectedPatientId(appointment.pacienteId ? appointment.pacienteId._id : appointment.pacienteId);
         setProfesional(appointment.profesional);
         setFecha(fechaStr);
         setHora(horaStr);
@@ -131,6 +135,8 @@ const AppointmentScreen = () => {
         setNotas(appointment.notas || '');
         setEditingId(appointment._id);
         setModalVisible(true);
+        
+        console.log('🔍 pacienteId establecido:', appointment.pacienteId ? appointment.pacienteId._id : appointment.pacienteId);
     };
 
     const deleteAppointment = async (id) => {
@@ -187,7 +193,14 @@ const AppointmentScreen = () => {
             return 'Paciente no seleccionado';
         }
         
-        return patientId ? patientId.nombre : 'Paciente no encontrado';
+        // CORRECIÓN: patientId puede ser un string o un objeto con _id y nombre
+        if (typeof patientId === 'object' && patientId !== null) {
+            return patientId.nombre || 'Nombre no disponible';
+        }
+        
+        // Si es string, buscar en la lista de pacientes
+        const patient = patients.find(p => p._id === patientId);
+        return patient ? patient.nombre : 'Paciente no encontrado';
     };
 
     const getSelectedPatientName = () => {
@@ -200,6 +213,7 @@ const AppointmentScreen = () => {
     };
 
     const handlePatientSelect = (patientId, patientName) => {
+        console.log('🎯 Paciente seleccionado para edición:', { patientId, patientName });
         setSelectedPatientId(patientId);
         setShowPatientDropdown(false);
     };
@@ -326,13 +340,14 @@ const AppointmentScreen = () => {
                                                                     {patient.nombre}
                                                                 </Text>
                                                                 <Text style={styles.dropdownItemId}>
-                                                                    {patient._id}
+                                                                    ID: {patient._id}
                                                                 </Text>
                                                             </TouchableOpacity>
                                                         ))}
                                                     </ScrollView>
                                                 </View>
                                             )}
+
                                         </View>
                                     )}
                                 </View>
@@ -413,7 +428,6 @@ const AppointmentScreen = () => {
         </ScrollView>
     );
 };
-
 const styles = StyleSheet.create({
     scrollView: {
         flex: 1,
