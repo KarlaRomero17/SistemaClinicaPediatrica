@@ -7,6 +7,7 @@ import PatientsScreen from "./frontend/src/screens/PatientsScreen";
 import SettingsScreen from "./frontend/src/screens/SettingsScreen";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import AppointmentScreen from "./frontend/src/screens/AppointmentScreen";
 
 
 const Drawer = createDrawerNavigator();
@@ -28,19 +29,26 @@ const AppTabs = () => {
         <Tab.Navigator>
             <Tab.Screen name="Principal" component={HomeScreen} options={
                 {
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="home" size={size} color={color} />
                     )
                 }
-            }/>
-            <Tab.Screen name="Pacientes" component={PatientsScreen}  options={
+            } />
+            <Tab.Screen name="Pacientes" component={PatientsScreen} options={
                 {
-                    tabBarIcon: ({color, size}) => (
+                    tabBarIcon: ({ color, size }) => (
                         <MaterialCommunityIcons name="baby-carriage" size={size} color={color} />
                     )
                 }
             }
             />
+            <Tab.Screen name="Citas" component={AppointmentScreen} options={
+                {
+                    tabBarIcon: ({ color, size }) => (
+                        <MaterialCommunityIcons name="calendar" size={size} color={color} />
+                    )
+                }
+            }/>
             <Tab.Screen name="Configuracion" component={SettingsScreen} options={
                 {
                     tabBarIcon: ({color, size}) => (

@@ -22,6 +22,10 @@ app.use('/api/auth', authRoutes);
 const pacienteRoutes = require('./routes/paciente');
 app.use('/api/pacientes', pacienteRoutes); 
 
+// Rutas para citas
+const citaRoutes = require('./routes/cita');
+app.use('/api/citas', citaRoutes);
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
     console.log(`Servidor ejecutándose en el puerto ${port}`);

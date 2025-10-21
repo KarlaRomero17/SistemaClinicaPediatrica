@@ -14,6 +14,10 @@ exports.getCitas = async (req, res) => {
 exports.addCita = async (req, res) => {
   const { pacienteId, profesional, fecha, motivo, estado, notas } = req.body;
 
+  if (!pacienteId) {
+    return res.status(400).json({ message: 'El campo pacienteId es obligatorio.' });
+  }
+
   try {
     const nuevaCita = new Cita({ pacienteId, profesional, fecha, motivo, estado, notas });
     await nuevaCita.save();

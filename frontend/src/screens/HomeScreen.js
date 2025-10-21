@@ -65,7 +65,7 @@ const HomeScreen = () => {
 
             <View style={styles.spacer} />
 
-            <TouchableOpacity style={styles.button} onPress={() => { }}>
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Citas')}>
                 <MaterialCommunityIcons name="calendar" size={24} color={"#ffff"} />
                 <Text style={styles.buttonText} >Citas</Text>
             </TouchableOpacity>

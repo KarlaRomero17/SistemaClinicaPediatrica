@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const citaSchema = new mongoose.Schema({
   pacienteId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Paciente', // referencia al modelo Paciente
+    ref: 'Paciente', 
     required: true
   },
   profesional: {
