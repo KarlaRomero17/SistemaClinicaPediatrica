@@ -1,159 +1,250 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
-import { useContext, useEffect, useState } from 'react';
-import { Image, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { UserContext } from '../context/UserContext';
-import axios from 'axios';
-
-//Pantalla de login
-const BASE_URL = Platform.OS === 'android' ? 'http://10.175.160.103:5000' : 'http://localhost:5000';
+// src/screens/EnhancedLoginScreen.js
+import React, { useState } from 'react';
+import {
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    StyleSheet,
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform,
+    Alert,
+    ActivityIndicator
+} from 'react-native';
 
 const LoginScreen = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-
-    const [isFocused1, setIsFocused1] = useState(false);
-    const [isFocused2, setIsFocused2] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
-    const { setUser } = useContext(UserContext);
-    const navigation = useNavigation();
-
-    //verificar si hay token 
-    useEffect(() => {
-        const checkToken = async () => {
-            const token = await AsyncStorage.getItem('token');
-            if (token) {
-                navigation.replace('Main');
-            }
-        }
-        checkToken();
-    }, []);
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleLogin = async () => {
-        //si falta algun campo
-        if (!username || !password) {
-            alert('Debe ingresar usuario y contraseña');
+        if (!email || !password) {
+            Alert.alert('Error', 'Por favor completa todos los campos');
+            return;
+        }
+
+        if (!isValidEmail(email)) {
+            Alert.alert('Error', 'Por favor ingresa un email válido');
             return;
         }
 
         setLoading(true);
-        try {
-            const res = await axios.post(`${BASE_URL}/api/auth/login`, {
-                nombreUsuario: username,
-                contraseña: password,
-            });
-            console.log(res.data);
-            //creat token
-            const { token } = res.data;
-            if(token){
-                await AsyncStorage.setItem('token', token);
-                await AsyncStorage.setItem('user', username);
-                setLoading(false);
-                navigation.replace('Main');
-            }else{
-                setLoading(false);
-                setError('Error al iniciar sesión');
-            }
 
-        } catch (error) {
+        // Simular proceso de login
+        setTimeout(() => {
             setLoading(false);
-            if(error.response && error.response.data && error.response.data.message){
-                setError(error.response.data.message);
-                alert(error.response.data.message);
-            }else{
-                setError('Error en el servidor (frontend)');
-            }
-        }
-
-
-        setUser({ username });
-        //navegar a la pantalla de inicio
-        //navigation.replace('Main')
-
+            Alert.alert('Éxito', `Bienvenido ${email}`);
+            // Aquí iría tu lógica real de autenticación
+        }, 2000);
     };
+
+    const isValidEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
+            >
+                {/* Header más compacto */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>Bienvenido</Text>
+                    <Text style={styles.subtitle}>Identifíquese para continuar!</Text>
+                </View>
 
-            <Image source={require('../../../assets/cat-logo.png')} style={styles.logo} />
-            <Text style={styles.title}>Iniciar Sesión</Text>
-            <TextInput
-                style={[styles.input, { borderWidth: isFocused1 ? 3 : 1 }]}
-                onChangeText={setUsername}
-                value={username}
-                placeholder="Nombre de usuario"
-                onFocus={() => setIsFocused1(true)}
-                onBlur={() => setIsFocused1(false)}
-            />
-            <TextInput
-                style={[styles.input, { borderWidth: isFocused2 ? 3 : 1 }]}
-                placeholder="Contraseña"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-                onFocus={() => setIsFocused2(true)}
-                onBlur={() => setIsFocused2(false)}
-            />
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText} >Ingresar</Text>
+                {/* Formulario con menos margen superior */}
+                <View style={styles.form}>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Correo electrónico</Text>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="tu.email@ejemplo.com"
+                            placeholderTextColor="#999"
+                            value={email}
+                            onChangeText={setEmail}
+                            keyboardType="email-address"
+                            autoCapitalize="none"
+                            autoComplete="email"
+                        />
+                    </View>
 
-            </TouchableOpacity>
+                    <View style={styles.inputContainer}>
+                        <Text style={styles.label}>Contraseña</Text>
+                        <View style={styles.passwordContainer}>
+                            <TextInput
+                                style={styles.passwordInput}
+                                placeholder="••••••••"
+                                placeholderTextColor="#999"
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={!showPassword}
+                            />
+                            <TouchableOpacity
+                                style={styles.showPasswordButton}
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                <Text style={styles.showPasswordText}>
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
 
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={{ marginTop: 15, color: '#005187', textAlign: 'center', fontSize: 16 }}>
-                    ¿No tienes cuenta? Regístrate
-                </Text>
-            </TouchableOpacity>
+                    {/* Olvidó contraseña */}
+                    <TouchableOpacity style={styles.forgotPassword}>
+                        <Text style={styles.forgotPasswordText}>Olvidó su contraseña?</Text>
+                    </TouchableOpacity>
 
-        </View>
+                    <TouchableOpacity
+                        style={[
+                            styles.loginButton,
+                            (!email || !password) && styles.loginButtonDisabled
+                        ]}
+                        onPress={handleLogin}
+                        disabled={!email || !password || loading}
+                    >
+                        {loading ? (
+                            <ActivityIndicator color="white" />
+                        ) : (
+                            <Text style={styles.loginButtonText}>Ingresar</Text>
+                        )}
+                    </TouchableOpacity>
+
+
+                    {/* Registro */}
+                    <View style={styles.registerContainer}>
+                        <Text style={styles.registerText}>Nuevo usuario? </Text>
+                        <TouchableOpacity>
+                            <Text style={styles.registerLink}>Regístrese aquí</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </KeyboardAvoidingView>
+        </SafeAreaView>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 20,
-        paddingTop: 150,
-        backgroundColor: '#eaeeffff',
+        backgroundColor: '#ffffff',
+    },
+    keyboardView: {
+        flex: 1,
+    },
+    header: {
+        paddingHorizontal: 30,
+        paddingTop: 40,      
+        paddingBottom: 20,    
+        alignItems: 'flex-start', 
     },
     title: {
-
-        fontSize: 30,
-        marginBottom: 20,
-        textAlign: 'center',
+        color: '#3f51b5',
+        fontSize: 32,
         fontWeight: 'bold',
-        color: '#005187',
+        marginBottom: 8,    
+    },
+    subtitle: {
+        color: '#b8b8b8',
+        fontSize: 16,
+    },
+    form: {
+        flex: 1,
+        paddingHorizontal: 30,
+        paddingTop: 10,  
+        // justifyContent: 'center' removido para evitar centrado vertical
+    },
+    inputContainer: {
+        marginBottom: 20,   
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#333',
+        marginBottom: 8,     
     },
     input: {
-        height: 50,
-        borderColor: '#005187',
         borderWidth: 1,
-        borderRadius: 10,
-        margin: 10,
-        padding: 10,
-        width: '100%',
-        fontSize: 18,
-        alignSelf: 'center',
+        borderColor: '#ddd',
+        borderRadius: 12,
+        padding: 16,
+        fontSize: 16,
+        backgroundColor: '#f8f9fa',
     },
-    logo: {
-        width: 120,
-        height: 120,
-        borderRadius: 50,
-        alignSelf: 'center',
+    passwordContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 12,
+        backgroundColor: '#f8f9fa',
     },
-    button: {
-        width: '100%',
-        backgroundColor: '#005187',
-        borderRadius: 10,
-        height: 50,
+    passwordInput: {
+        flex: 1,
+        padding: 16,
+        fontSize: 16,
+    },
+    showPasswordButton: {
+        padding: 16,
+    },
+    showPasswordText: {
+        color: '#666',
+        fontSize: 16,
+    },
+    forgotPassword: {
+        alignSelf: 'flex-end',
+        marginBottom: 25,   
+    },
+    forgotPasswordText: {
+        color: '#3f51b5',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    loginButton: {
+        backgroundColor: '#3f51b5',
+        padding: 16,          
+        borderRadius: 12,
+        alignItems: 'center',
+        marginBottom: 20,    
+        shadowColor: '#3f51b5',
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 8,
+        borderWidth: 2,
+    },
+    loginButtonDisabled: {
+        backgroundColor: '#9fa8da',
+        shadowOpacity: 0.1,
+    },
+    loginButtonText: {
+        color: 'white',
+        fontSize: 16,       
+        fontWeight: 'bold',
+        letterSpacing: 1,
+    },
+    registerContainer: {
+        flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 10,
-        alignSelf: 'center',
+        marginTop: 40,
     },
-    buttonText: {
-        color: '#fff',
-        fontSize: 18,
+    registerText: {
+        color: '#666',
+        fontSize: 14,
+    },
+    registerLink: {
+        color: '#3f51b5',
+        fontSize: 14,
         fontWeight: 'bold',
     },
 });
+
 export default LoginScreen;
