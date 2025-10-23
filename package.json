@@ -23,7 +23,6 @@
     "expo": "~53.0.20",
     "expo-sqlite": "~15.2.14",
     "expo-status-bar": "~2.2.3",
-    "native-base": "^3.4.28",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "react-native": "0.79.5",
