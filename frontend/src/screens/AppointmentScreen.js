@@ -118,7 +118,6 @@ const AppointmentScreen = () => {
     };
 
     const editAppointment = (appointment) => {
-        console.log('📝 Editando cita:', appointment);
         
         // Separar fecha y hora del formato ISO
         const fechaHora = new Date(appointment.fecha);
@@ -135,8 +134,7 @@ const AppointmentScreen = () => {
         setNotas(appointment.notas || '');
         setEditingId(appointment._id);
         setModalVisible(true);
-        
-        console.log('🔍 pacienteId establecido:', appointment.pacienteId ? appointment.pacienteId._id : appointment.pacienteId);
+
     };
 
     const deleteAppointment = async (id) => {
@@ -155,7 +153,6 @@ const AppointmentScreen = () => {
                             loadAppointments();
                         } catch (error) {
                             Alert.alert("Error", "No se pudo eliminar la cita");
-                            console.error('Error deleting appointment:', error);
                         }
                     }
                 }
@@ -213,7 +210,6 @@ const AppointmentScreen = () => {
     };
 
     const handlePatientSelect = (patientId, patientName) => {
-        console.log('🎯 Paciente seleccionado para edición:', { patientId, patientName });
         setSelectedPatientId(patientId);
         setShowPatientDropdown(false);
     };

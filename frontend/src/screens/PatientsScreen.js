@@ -13,7 +13,7 @@ import {
 import axios from 'axios';
 
 // Ajusta la URL base según la plataforma
-const BASE_URL = Platform.OS === 'android' ? 'http://10.175.160.103:5000' : 'http://localhost:5000';
+const BASE_URL = Platform.OS === 'android' ? 'https://apipacientes-ew5d.onrender.com' : 'https://apipacientes-ew5d.onrender.com';
 
 const PatientsScreen = () => {
     const [inputText, setInputText] = useState('');

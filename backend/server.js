@@ -8,11 +8,15 @@ const app = express();
 //configuraciones a servidor http
 app.use(bodyParser.json());
 app.use(cors());
+// importar dotenv para variables de entorno
+require('dotenv').config();
 
-mongoose.connect('mongodb://localhost:27017/sistema-clinica', {
+mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-});
+})
+.then(() => console.log('Conectado a la base de datos MongoDB'))
+.catch(err => console.error('Error al conectar a la base de datos MongoDB:', err));
 
 // Rutas para auth
 const authRoutes = require('./routes/auth');

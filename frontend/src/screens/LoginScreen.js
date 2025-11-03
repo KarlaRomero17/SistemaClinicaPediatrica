@@ -6,7 +6,7 @@ import { UserContext } from '../context/UserContext';
 import axios from 'axios';
 
 //Pantalla de login
-const BASE_URL = Platform.OS === 'android' ? 'http://10.175.160.103:5000' : 'http://localhost:5000';
+const BASE_URL = Platform.OS === 'android' ? 'https://apipacientes-ew5d.onrender.com' : 'https://apipacientes-ew5d.onrender.com';
 
 const LoginScreen = () => {
     const [username, setUsername] = useState('');
